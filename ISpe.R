@@ -1,4 +1,5 @@
-
+library(ggeasy)
+library(tibble)
 library(ape)
 library(cluster)	
 library(ggplot2)
@@ -16,6 +17,8 @@ data(iris)
 #Scaling and	centering	trait	matrix (standardize)
 
 PCOA <- iris[,1:4] %>%  scale() %>%  daisy(metric="euclidean") %>% pcoa(correction="cailliez")
+PCOA
+
 
 Axes<-PCOA$vectors[,1:2] %>% as.data.frame() %>%
   add_column(Species = iris[,5], .before = 1)
@@ -36,7 +39,10 @@ A<-ggplot(data = PC, aes(PCoA1, PCoA2))+  #plot
     fill = "#FFFFFF", colour = "grey", size = 3, shape = 21, stroke=0.5)+
   geom_point(data = PC,aes(group= Species, fill = Species), size=5, shape = 21, stroke=1.1)+
   scale_fill_manual(values = c("#F29783", "#B5F252","#A2A0F0"))+
+  labs(title = "Interspecific", x = "PCoA1 (72.9%)", y = "PCoA2 (22.8%)")+
+  ggeasy::easy_center_title()+
   coord_fixed()+
+  theme(plot.title = element_text(face = "bold",size = 22))+
   theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
   theme(axis.text=element_text(size=16),
         axis.title=element_text(size=16))+
@@ -50,7 +56,7 @@ A<-ggplot(data = PC, aes(PCoA1, PCoA2))+  #plot
     legend.key.size = )+
   theme(text=element_text(family="Times New Roman"))+
   theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
-
+A
 #Intraspecific
 
 data(iris)
@@ -108,7 +114,10 @@ B<-ggplot(data = PC, aes(PCoA1, PCoA2))+  #plot
              fill = "#FFFFFF", colour = "grey", size = 3, shape = 21, stroke=0.5)+
   geom_point(data = PC,aes(group= Species, fill = Species), size=5, shape = 21, stroke=1.1)+
   scale_fill_manual(values = c("#F29783", "#B5F252","#A2A0F0"))+
+  labs(title = "Intraspecific", x = "PCoA1 (72.9%)", y = "PCoA2 (22.8%)")+
+  ggeasy::easy_center_title()+
   coord_fixed()+
+  theme(plot.title = element_text(face = "bold",size = 22))+
   theme(panel.background = element_blank(), axis.line = element_line(colour = "black"))+
   theme(axis.text=element_text(size=16),
         axis.title=element_text(size=16))+
@@ -122,9 +131,8 @@ B<-ggplot(data = PC, aes(PCoA1, PCoA2))+  #plot
     legend.key.size = )+
   theme(text=element_text(family="Times New Roman"))+
   theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
-
+B
 library(cowplot)
 
 plot_grid(B, A, ncol=2, nrow = 1,
-          labels = c("Intraspecific", "Interspecific"), label_x = 1.1, hjust = 5,
           align = "hv")
