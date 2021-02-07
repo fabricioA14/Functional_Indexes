@@ -1,14 +1,20 @@
 ---
-title: "**Functional Specialization (FSpe)**"
 output: html_document
+title: <font size=5, font face=times> **Functional Specialization (FSpe)**
+author:
+- name: <font size=4> *Fabricio A S Rosa*
+  affiliation: <font size=4> Universidade Federal do Pará
 ---
-\ 
 
-***
+<font size=4> For more scripts visit my [GitHub](https://github.com/fabricioA14) profile.
 
-\ 
+___________________________________________________________________________________________________
 
-<font size=3> Packages:
+<style>
+body {
+text-align: justify}
+</style>
+<font size=3>Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:Install the following packages:
 ```{r warning = FALSE, message = FALSE}
 library(ggeasy)
 library(tibble)
@@ -18,7 +24,7 @@ library(ggplot2)
 library(extrafont)
 ```
 
-# **Interspecific**
+<font size=4> **Interspecific**
 
 <font size=3> Load data:
 ```{r}
@@ -33,9 +39,10 @@ PCOA <- iris[,1:4] %>%  scale() %>%  daisy(metric="euclidean") %>% pcoa(correcti
 <font size=3> Extract the two first PCoA axes:
 ```{r}
 Axes<-PCOA$vectors[,1:2] %>% as.data.frame() %>% add_column(Species = iris[,5], .before = 1)
+names(Axes)[2:3] <- c("PCoA1","PCoA2")
 ```
 
-<font size=3> Extract data centroid + Index generation:
+<font size=3> Extract data centroid:
 ```{r warning = FALSE}
 o<-apply(Axes[,2:3],	2,	mean) %>% rbind() %>% as.data.frame()
 ```
@@ -43,19 +50,17 @@ o<-apply(Axes[,2:3],	2,	mean) %>% rbind() %>% as.data.frame()
 <font size=3> Index generation:
 ```{r}
 speS<-Axes[,2:3] %>% apply(1,	function(x)	{	(sum((x-o)^2)	)^0.5}) %>% as.data.frame()
+#speS<-speS/max(speS) # final index
 ```
 
 <font size=3> Plot:
 ```{r}
-PC<-data.frame(PCoA1 = PCOA$vectors[,1], PCoA2 = PCOA$vectors[,2]) %>% #Plot
-  add_column(Species = iris[,5], .before = 1)
-
-A<-ggplot(data = PC, aes(PCoA1, PCoA2))+  #plot
+A<-ggplot(data = Axes, aes(PCoA1, PCoA2))+  #plot
   geom_segment(data = Axes,
-    aes(x = -3.082387e-18, y = 2.333830e-16, xend = Axis.1, yend = Axis.2), colour = "grey", size = 0.3)+
+    aes(x = -3.082387e-18, y = 2.333830e-16, xend = PCoA1, yend = PCoA2), colour = "grey", size = 0.3)+
   geom_point(aes(x = -3.082387e-18, y = 2.333830e-16), 
     fill = "#FFFFFF", colour = "grey", size = 3, shape = 21, stroke=0.5)+
-  geom_point(data = PC,aes(group= Species, fill = Species), size=5, shape = 21, stroke=1.1)+
+  geom_point(data = Axes,aes(group= Species, fill = Species), size=5, shape = 21, stroke=1.1)+
   scale_fill_manual(values = c("#F29783", "#B5F252","#A2A0F0"))+
   labs(title = "Interspecific", x = "PCoA1 (72.9%)", y = "PCoA2 (22.8%)")+
   ggeasy::easy_center_title()+
